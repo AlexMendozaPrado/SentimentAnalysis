@@ -176,14 +176,24 @@ Proporciona un análisis completo del sentimiento y emociones presentes en el te
       // Validate sentiment type
       const sentimentType = this.parseSentimentType(parsed.overallSentiment);
 
-      // Validate and create emotion scores
+      // Validate and normalize emotion scores
+      const rawScores = {
+        joy: parsed.emotionScores.joy || 0,
+        sadness: parsed.emotionScores.sadness || 0,
+        anger: parsed.emotionScores.anger || 0,
+        fear: parsed.emotionScores.fear || 0,
+        surprise: parsed.emotionScores.surprise || 0,
+        disgust: parsed.emotionScores.disgust || 0
+      };
+
+      const normalizedScores = this.normalizeEmotionScores(rawScores);
       const emotionScores = new EmotionScoreValueObject(
-        parsed.emotionScores.joy || 0,
-        parsed.emotionScores.sadness || 0,
-        parsed.emotionScores.anger || 0,
-        parsed.emotionScores.fear || 0,
-        parsed.emotionScores.surprise || 0,
-        parsed.emotionScores.disgust || 0
+        normalizedScores.joy,
+        normalizedScores.sadness,
+        normalizedScores.anger,
+        normalizedScores.fear,
+        normalizedScores.surprise,
+        normalizedScores.disgust
       );
 
       // Validate confidence
@@ -202,6 +212,32 @@ Proporciona un análisis completo del sentimiento y emociones presentes en el te
       // Fallback: create a basic analysis if parsing fails
       return this.createFallbackAnalysis(responseContent);
     }
+  }
+
+  private normalizeEmotionScores(scores: Record<string, number>): Record<string, number> {
+    const values = Object.values(scores);
+    const sum = values.reduce((acc, val) => acc + val, 0);
+
+    // If sum is 0 or very close to 0, distribute evenly
+    if (sum < 0.01) {
+      const evenScore = 1 / 6;
+      return {
+        joy: evenScore,
+        sadness: evenScore,
+        anger: evenScore,
+        fear: evenScore,
+        surprise: evenScore,
+        disgust: evenScore
+      };
+    }
+
+    // Normalize to sum to 1
+    const normalizedScores: Record<string, number> = {};
+    for (const [key, value] of Object.entries(scores)) {
+      normalizedScores[key] = value / sum;
+    }
+
+    return normalizedScores;
   }
 
   private parseSentimentType(sentiment: string): SentimentType {
@@ -245,15 +281,29 @@ Proporciona un análisis completo del sentimiento y emociones presentes en el te
       confidence = 0.6;
     }
 
-    // Create basic emotion scores
-    const emotionScores = new EmotionScoreValueObject(
-      sentiment === SentimentType.POSITIVE ? 0.6 : 0.1,
-      sentiment === SentimentType.NEGATIVE ? 0.6 : 0.1,
-      sentiment === SentimentType.NEGATIVE ? 0.4 : 0.1,
-      0.1,
-      0.1,
-      sentiment === SentimentType.NEGATIVE ? 0.3 : 0.1
-    );
+    // Create basic emotion scores that sum to 1
+    let joy = 0.1, sadness = 0.1, anger = 0.1, fear = 0.1, surprise = 0.1, disgust = 0.1;
+
+    if (sentiment === SentimentType.POSITIVE) {
+      joy = 0.5;
+      sadness = 0.1;
+      anger = 0.1;
+      fear = 0.1;
+      surprise = 0.1;
+      disgust = 0.1;
+    } else if (sentiment === SentimentType.NEGATIVE) {
+      joy = 0.1;
+      sadness = 0.3;
+      anger = 0.3;
+      fear = 0.1;
+      surprise = 0.1;
+      disgust = 0.1;
+    } else {
+      // Neutral - distribute evenly
+      joy = sadness = anger = fear = surprise = disgust = 1/6;
+    }
+
+    const emotionScores = new EmotionScoreValueObject(joy, sadness, anger, fear, surprise, disgust);
 
     return {
       overallSentiment: sentiment,

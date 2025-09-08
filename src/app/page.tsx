@@ -51,103 +51,87 @@ export default function HomePage() {
   };
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom>
+    <div className="bg-surface1 rounded-lg p-8 shadow-sm">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-textPrimary mb-4">
           Análisis de Sentimientos
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        </h1>
+        <p className="text-textSecondary mb-6">
           Analiza documentos PDF para obtener insights sobre el sentimiento y emociones de tus clientes
-        </Typography>
+        </p>
 
         {/* Overview Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <UploadIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-                <Typography variant="h6" gutterBottom>
-                  Carga Documentos
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Sube archivos PDF para análisis automático
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <AnalyticsIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
-                <Typography variant="h6" gutterBottom>
-                  Análisis IA
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Powered by OpenAI GPT-4 para máxima precisión
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <AssessmentIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
-                <Typography variant="h6" gutterBottom>
-                  Métricas Detalladas
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Sentimientos, emociones y métricas de texto
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <HistoryIcon sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
-                <Typography variant="h6" gutterBottom>
-                  Historial
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Consulta y exporta análisis previos
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-surface1 rounded-lg p-6 shadow-sm border border-borderLight text-center">
+            <UploadIcon sx={{ fontSize: 40, color: '#EB0029', mb: 1 }} />
+            <h3 className="text-lg font-semibold text-textPrimary mb-2">
+              Carga Documentos
+            </h3>
+            <p className="text-sm text-textSecondary">
+              Sube archivos PDF para análisis automático
+            </p>
+          </div>
+
+          <div className="bg-surface1 rounded-lg p-6 shadow-sm border border-borderLight text-center">
+            <AnalyticsIcon sx={{ fontSize: 40, color: '#6CC04A', mb: 1 }} />
+            <h3 className="text-lg font-semibold text-textPrimary mb-2">
+              Análisis IA
+            </h3>
+            <p className="text-sm text-textSecondary">
+              Powered by OpenAI GPT-4 para máxima precisión
+            </p>
+          </div>
+
+          <div className="bg-surface1 rounded-lg p-6 shadow-sm border border-borderLight text-center">
+            <AssessmentIcon sx={{ fontSize: 40, color: '#FFA400', mb: 1 }} />
+            <h3 className="text-lg font-semibold text-textPrimary mb-2">
+              Métricas Detalladas
+            </h3>
+            <p className="text-sm text-textSecondary">
+              Sentimientos, emociones y métricas de texto
+            </p>
+          </div>
+
+          <div className="bg-surface1 rounded-lg p-6 shadow-sm border border-borderLight text-center">
+            <HistoryIcon sx={{ fontSize: 40, color: '#323E48', mb: 1 }} />
+            <h3 className="text-lg font-semibold text-textPrimary mb-2">
+              Historial
+            </h3>
+            <p className="text-sm text-textSecondary">
+              Consulta y exporta análisis previos
+            </p>
+          </div>
+        </div>
 
         {/* Navigation Tabs */}
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <div className="border-b border-borderDashed">
           <Tabs value={currentTab} onChange={handleTabChange} aria-label="navigation tabs">
-            <Tab 
-              label="Analizar Documento" 
-              icon={<UploadIcon />} 
+            <Tab
+              label="Analizar Documento"
+              icon={<UploadIcon />}
               iconPosition="start"
               id="simple-tab-0"
               aria-controls="simple-tabpanel-0"
             />
-            <Tab 
-              label="Historial de Análisis" 
-              icon={<HistoryIcon />} 
+            <Tab
+              label="Historial de Análisis"
+              icon={<HistoryIcon />}
               iconPosition="start"
               id="simple-tab-1"
               aria-controls="simple-tabpanel-1"
             />
           </Tabs>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       {/* Tab Panels */}
       <TabPanel value={currentTab} index={0}>
         <AnalyzePage />
       </TabPanel>
-      
+
       <TabPanel value={currentTab} index={1}>
         <HistoryPage />
       </TabPanel>
-    </Container>
+    </div>
   );
 }
