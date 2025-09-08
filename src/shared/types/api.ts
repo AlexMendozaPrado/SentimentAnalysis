@@ -1,7 +1,7 @@
 // API Types for the presentation layer
-import { SentimentType } from '../../../core/domain/value-objects/SentimentType';
-import { EmotionScore } from '../../../core/domain/value-objects/EmotionScore';
-import { AnalysisMetrics } from '../../../core/domain/value-objects/AnalysisMetrics';
+import { SentimentType } from '../../core/domain/value-objects/SentimentType';
+import { EmotionScore } from '../../core/domain/value-objects/EmotionScore';
+import { AnalysisMetrics } from '../../core/domain/value-objects/AnalysisMetrics';
 
 export interface ApiResponse<T = any> {
   success: boolean;

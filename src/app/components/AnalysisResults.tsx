@@ -18,6 +18,7 @@ import {
 } from '@mui/icons-material';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { AnalysisResponse } from '../../shared/types/api';
+import { EmotionScore } from '../../core/domain/value-objects/EmotionScore';
 import {
   formatSentiment,
   getSentimentColor,
@@ -39,11 +40,14 @@ interface AnalysisResultsProps {
 
 export function AnalysisResults({ analysis }: AnalysisResultsProps) {
   // Prepare emotion data for charts
-  const emotionData = Object.entries(analysis.emotionScores).map(([emotion, score]) => ({
-    name: formatEmotion(emotion as keyof typeof analysis.emotionScores),
-    value: score,
-    color: getEmotionColor(emotion as keyof typeof analysis.emotionScores),
-  }));
+  const validEmotions: Array<keyof EmotionScore> = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'disgust'];
+  const emotionData = validEmotions
+    .filter(emotion => emotion in analysis.emotionScores)
+    .map(emotion => ({
+      name: formatEmotion(emotion),
+      value: analysis.emotionScores[emotion],
+      color: getEmotionColor(emotion),
+    }));
 
   const sentimentData = [
     {

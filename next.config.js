@@ -15,12 +15,7 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  // Configure file upload limits
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-  },
+
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     return config;

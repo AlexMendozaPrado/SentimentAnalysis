@@ -145,35 +145,7 @@ export class PDFTextExtractor implements TextExtractorPort {
       .replace(/-{3,}/g, '---');
   }
 
-  /**
-   * Extracts text from specific pages of a PDF
-   */
-  async extractTextFromPages(
-    fileBuffer: Buffer, 
-    pageNumbers: number[]
-  ): Promise<ExtractedText> {
-    try {
-      const fullExtraction = await this.extractTextFromPDF(fileBuffer, {
-        includeMetadata: true,
-        preserveFormatting: false,
-      });
 
-      // For simplicity, we'll return the full text since pdf-parse doesn't 
-      // easily support page-specific extraction. In a production environment,
-      // you might want to use a more sophisticated PDF library like pdf2pic + OCR
-      // or pdf-lib for more granular control.
-      
-      return {
-        content: fullExtraction.content,
-        metadata: {
-          ...fullExtraction.metadata,
-          extractedPages: pageNumbers,
-        },
-      };
-    } catch (error) {
-      throw new Error(`Failed to extract text from specified pages: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  }
 
   /**
    * Gets basic information about a PDF without extracting all text

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { SentimentAnalysisEntity } from '../../domain/entities/SentimentAnalysis';
+import { SentimentAnalysisEntity, SentimentAnalysis } from '../../domain/entities/SentimentAnalysis';
 import { AnalysisMetricsValueObject } from '../../domain/value-objects/AnalysisMetrics';
 import { SentimentAnalyzerPort, SentimentAnalysisRequest } from '../../domain/ports/SentimentAnalyzerPort';
 import { TextExtractorPort } from '../../domain/ports/TextExtractorPort';
@@ -89,8 +89,23 @@ export class AnalyzeSentimentUseCase {
       // Save to repository
       const savedAnalysis = await this.repository.save(analysisEntity);
 
+      // Convert back to entity to ensure we have all methods
+      const resultEntity = new SentimentAnalysisEntity(
+        savedAnalysis.id,
+        savedAnalysis.clientName,
+        savedAnalysis.documentName,
+        savedAnalysis.documentContent,
+        savedAnalysis.overallSentiment,
+        savedAnalysis.emotionScores,
+        savedAnalysis.analysisMetrics,
+        savedAnalysis.confidence,
+        savedAnalysis.channel,
+        savedAnalysis.createdAt,
+        savedAnalysis.updatedAt
+      );
+
       return {
-        analysis: savedAnalysis,
+        analysis: resultEntity,
         processingTimeMs,
       };
     } catch (error) {

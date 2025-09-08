@@ -145,7 +145,7 @@ export class ExportAnalysisUseCase {
     if (!analysis) return 1000; // Default estimate
 
     // Rough estimation based on JSON serialization
-    const jsonString = JSON.stringify(analysis.toJSON());
+    const jsonString = JSON.stringify(analysis);
     return jsonString.length * 1.2; // Add 20% overhead for CSV/Excel formatting
   }
 
