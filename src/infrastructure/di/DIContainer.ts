@@ -35,7 +35,7 @@ export class DIContainer {
   private _repository?: SentimentAnalysisRepositoryPort;
   private _exportService?: ExportServicePort;
 
-  // Application Layer
+  // Application Layer 
   private _analyzeSentimentUseCase?: AnalyzeSentimentUseCase;
   private _getHistoricalAnalysisUseCase?: GetHistoricalAnalysisUseCase;
   private _filterAnalysisUseCase?: FilterAnalysisUseCase;
