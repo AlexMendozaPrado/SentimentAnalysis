@@ -32,13 +32,18 @@ export default function RootLayout({
               component="footer"
               sx={{
                 backgroundColor: '#f5f5f5',
-                py: 2,
+                py: 3,
                 mt: 'auto',
                 textAlign: 'center'
               }}
             >
-              <div className="text-sm text-textSecondary">
-                © 2024 Banorte. Todos los derechos reservados.
+              <div className="text-sm text-textSecondary space-y-2">
+                <div>
+                  Términos Legales | Aviso de Privacidad | Consulta los costos y las comisiones de nuestros productos
+                </div>
+                <div>
+                  2025 Grupo Financiero Banorte. Derechos reservados.
+                </div>
               </div>
             </Box>
           </div>
