@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DIContainer } from '../../../../infrastructure/di/DIContainer';
 import { ApiResponse, AnalysisResponse } from '../../../../shared/types/api';
+import { getAIProviderConfig, validateAIProviderConfig } from '../../../../config/ai-provider.config';
 
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<AnalysisResponse[]>>> {
   try {
-    // Get environment variables
-    const openaiApiKey = process.env.OPENAI_API_KEY;
-    if (!openaiApiKey) {
+    // Validate AI provider configuration
+    try {
+      validateAIProviderConfig();
+    } catch (error) {
       return NextResponse.json(
         {
           success: false,
@@ -17,12 +19,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // Initialize DI Container
-    const container = DIContainer.getInstance({
-      openaiApiKey,
-      openaiModel: process.env.DEFAULT_MODEL || 'gpt-4',
-      maxTokens: parseInt(process.env.MAX_TOKENS || '4000'),
-      temperature: parseFloat(process.env.TEMPERATURE || '0.3'),
-    });
+    const container = DIContainer.getInstance(getAIProviderConfig());
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);

@@ -109,6 +109,139 @@ yarn dev
 ### 5. Abrir en el navegador
 Visita [http://localhost:3000](http://localhost:3000)
 
+## 🤖 Configuración de Proveedores de IA
+
+La aplicación soporta **múltiples proveedores de IA** para el análisis de sentimientos, permitiendo flexibilidad entre soluciones cloud y locales:
+
+### Proveedores Disponibles
+
+#### 1. OpenAI (Default)
+**Características**:
+- Modelos: GPT-4, GPT-4 Turbo, GPT-3.5 Turbo
+- Alta precisión en análisis de sentimientos
+- Requiere conexión a internet y API key
+
+**Configuración**:
+```env
+AI_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+DEFAULT_MODEL=gpt-4
+```
+
+#### 2. Ollama (Local LLM)
+**Características**:
+- Modelos locales: Llama 3.2, Qwen 2.5, Llama 3.1, Mistral, CodeLlama
+- Sin costo de API, procesamiento 100% local
+- No requiere conexión a internet
+- Mayor privacidad de datos
+
+**Configuración**:
+```env
+AI_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.2  # o qwen2.5:latest para mejor precisión
+```
+
+**Modelos Recomendados**:
+- `llama3.2:latest` (2.0 GB) - Rápido y eficiente
+- `qwen2.5:latest` (4.7 GB) - Mayor precisión y mejor comprensión contextual
+
+### Instalación de Ollama
+
+#### Windows
+1. Descargar desde [https://ollama.ai](https://ollama.ai)
+2. Ejecutar el instalador
+3. Abrir terminal y ejecutar:
+```bash
+ollama pull llama3.2
+```
+
+#### Linux
+```bash
+curl -fsSL https://ollama.ai/install.sh | sh
+ollama pull llama3.2
+```
+
+#### macOS
+```bash
+brew install ollama
+ollama serve &
+ollama pull llama3.2
+```
+
+#### Verificar instalación
+```bash
+# Verificar que Ollama está corriendo
+curl http://localhost:11434/api/tags
+
+# Listar modelos disponibles
+ollama list
+```
+
+### Modelos Recomendados de Ollama
+
+| Modelo | Tamaño | Uso RAM | Velocidad | Calidad |
+|--------|--------|---------|-----------|---------|
+| llama3.2 | ~2GB | 4GB | ⚡⚡⚡ Rápido | ⭐⭐⭐ Buena |
+| llama3.1 | ~4GB | 8GB | ⚡⚡ Media | ⭐⭐⭐⭐ Muy Buena |
+| mistral | ~4GB | 8GB | ⚡⚡⚡ Rápido | ⭐⭐⭐⭐ Muy Buena |
+| llama2 | ~3GB | 6GB | ⚡⚡ Media | ⭐⭐⭐ Buena |
+
+### Cambiar entre Proveedores
+
+Simplemente cambia la variable `AI_PROVIDER` en tu `.env.local`:
+
+```bash
+# Usar OpenAI
+AI_PROVIDER=openai
+
+# Usar Ollama
+AI_PROVIDER=ollama
+```
+
+**No se requieren cambios en el código** - la arquitectura usa el patrón Strategy para intercambiar proveedores dinámicamente.
+
+### Parámetros Opcionales Comunes
+
+Ambos proveedores soportan configuración opcional:
+
+```env
+# Temperatura (creatividad del modelo)
+# - OpenAI default: 0.3
+# - Ollama default: 0.8
+# - Rango: 0.0-2.0
+TEMPERATURE=0.3
+
+# Máximo de tokens a generar
+# - OpenAI default: 4000
+# - Ollama default: ilimitado (-1)
+MAX_TOKENS=4000
+```
+
+### Arquitectura de Proveedores
+
+La abstracción de proveedores de IA se implementa usando:
+
+- **Port**: `SentimentAnalyzerPort` (interfaz del dominio)
+- **Adapters**: `OpenAISentimentAnalyzer`, `OllamaSentimentAnalyzer`
+- **Factory**: `SentimentAnalyzerFactory` (crea el adaptador correcto)
+- **DI Container**: Inyecta el adaptador según configuración
+
+Esto sigue los principios de **Hexagonal Architecture** y permite agregar nuevos proveedores sin modificar el código existente.
+
+### Comparación de Proveedores
+
+| Característica | OpenAI | Ollama |
+|---------------|--------|--------|
+| **Costo** | Por token | Gratis |
+| **Privacidad** | Cloud | 100% Local |
+| **Internet** | Requerido | No requerido |
+| **Velocidad** | Media-Rápida | Rápida* |
+| **Calidad** | Excelente | Muy Buena* |
+| **Setup** | API Key | Instalación local |
+
+\* *Depende del modelo y hardware*
+
 ## 📁 Estructura del Proyecto
 
 ```

@@ -1,10 +1,10 @@
 // Dependency Injection Container for Clean Architecture
-import { OpenAISentimentAnalyzer } from '../sentiment/OpenAISentimentAnalyzer';
 import { PDFTextExtractor } from '../text-extraction/PDFTextExtractor';
 import { InMemorySentimentAnalysisRepository } from '../repositories/InMemorySentimentAnalysisRepository';
 import { CSVExportService } from '../export/CSVExportService';
+import { SentimentAnalyzerFactory, AIProvider } from '../sentiment/SentimentAnalyzerFactory';
 
-import { 
+import {
   AnalyzeSentimentUseCase,
   GetHistoricalAnalysisUseCase,
   FilterAnalysisUseCase,
@@ -17,8 +17,18 @@ import { SentimentAnalysisRepositoryPort } from '../../core/domain/ports/Sentime
 import { ExportServicePort } from '../../core/domain/ports/ExportServicePort';
 
 export interface DIContainerConfig {
-  openaiApiKey: string;
+  // AI Provider
+  aiProvider?: AIProvider;
+
+  // OpenAI configuration
+  openaiApiKey?: string;
   openaiModel?: string;
+
+  // Ollama configuration
+  ollamaBaseUrl?: string;
+  ollamaModel?: string;
+
+  // Common configuration
   maxTokens?: number;
   temperature?: number;
   maxFileSize?: number;
@@ -62,12 +72,15 @@ export class DIContainer {
   // Infrastructure Layer Getters
   public get sentimentAnalyzer(): SentimentAnalyzerPort {
     if (!this._sentimentAnalyzer) {
-      this._sentimentAnalyzer = new OpenAISentimentAnalyzer(
-        this.config.openaiApiKey,
-        this.config.openaiModel || 'gpt-4',
-        this.config.maxTokens || 4000,
-        this.config.temperature || 0.3
-      );
+      this._sentimentAnalyzer = SentimentAnalyzerFactory.create({
+        provider: this.config.aiProvider || 'openai',
+        openaiApiKey: this.config.openaiApiKey,
+        openaiModel: this.config.openaiModel,
+        ollamaBaseUrl: this.config.ollamaBaseUrl,
+        ollamaModel: this.config.ollamaModel,
+        maxTokens: this.config.maxTokens,
+        temperature: this.config.temperature,
+      });
     }
     return this._sentimentAnalyzer;
   }

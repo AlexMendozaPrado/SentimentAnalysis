@@ -215,29 +215,53 @@ Proporciona un análisis completo del sentimiento y emociones presentes en el te
   }
 
   private normalizeEmotionScores(scores: Record<string, number>): Record<string, number> {
+    const MINIMUM_THRESHOLD = 0.05; // 5% mínimo para considerar una emoción presente
+
     const values = Object.values(scores);
     const sum = values.reduce((acc, val) => acc + val, 0);
 
-    // If sum is 0 or very close to 0, distribute evenly
+    // Si la suma es muy baja, el modelo no detectó emociones claras
+    // En lugar de distribuir equitativamente, asignar ceros
     if (sum < 0.01) {
-      const evenScore = 1 / 6;
       return {
-        joy: evenScore,
-        sadness: evenScore,
-        anger: evenScore,
-        fear: evenScore,
-        surprise: evenScore,
-        disgust: evenScore
+        joy: 0,
+        sadness: 0,
+        anger: 0,
+        fear: 0,
+        surprise: 0,
+        disgust: 0
       };
     }
 
-    // Normalize to sum to 1
+    // Paso 1: Normalizar primero
     const normalizedScores: Record<string, number> = {};
     for (const [key, value] of Object.entries(scores)) {
       normalizedScores[key] = value / sum;
     }
 
-    return normalizedScores;
+    // Paso 2: Filtrar emociones por debajo del umbral
+    const filteredScores: Record<string, number> = {};
+    let filteredSum = 0;
+
+    for (const [key, value] of Object.entries(normalizedScores)) {
+      if (value >= MINIMUM_THRESHOLD) {
+        filteredScores[key] = value;
+        filteredSum += value;
+      } else {
+        filteredScores[key] = 0; // Asignar 0 a emociones insignificantes
+      }
+    }
+
+    // Paso 3: Re-normalizar solo las emociones significativas para que sumen 1.0
+    if (filteredSum > 0) {
+      for (const key in filteredScores) {
+        if (filteredScores[key] > 0) {
+          filteredScores[key] = filteredScores[key] / filteredSum;
+        }
+      }
+    }
+
+    return filteredScores;
   }
 
   private parseSentimentType(sentiment: string): SentimentType {

@@ -1,29 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DIContainer } from '../../../infrastructure/di/DIContainer';
 import { ApiResponse, AnalysisResponse } from '../../../shared/types/api';
+import { getAIProviderConfig, validateAIProviderConfig } from '../../../config/ai-provider.config';
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<AnalysisResponse>>> {
   try {
-    // Get environment variables
-    const openaiApiKey = process.env.OPENAI_API_KEY;
-    if (!openaiApiKey) {
+    // Validate AI provider configuration
+    try {
+      validateAIProviderConfig();
+    } catch (error) {
       return NextResponse.json(
         {
           success: false,
-          error: 'OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.',
+          error: error instanceof Error ? error.message : 'AI provider configuration is invalid',
         },
         { status: 500 }
       );
     }
 
-    // Initialize DI Container
-    const container = DIContainer.getInstance({
-      openaiApiKey,
-      openaiModel: process.env.DEFAULT_MODEL || 'gpt-4',
-      maxTokens: parseInt(process.env.MAX_TOKENS || '4000'),
-      temperature: parseFloat(process.env.TEMPERATURE || '0.3'),
-      maxFileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760'), // 10MB
-    });
+    // Initialize DI Container with AI provider configuration
+    const container = DIContainer.getInstance(getAIProviderConfig());
 
     // Validate configuration
     const isConfigValid = await container.validateConfiguration();
