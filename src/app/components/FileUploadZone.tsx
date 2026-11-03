@@ -71,6 +71,7 @@ export function FileUploadZone({ onFileSelect, selectedFile, disabled }: FileUpl
       {!selectedFile ? (
         <Paper
           {...getRootProps()}
+          data-testid="upload-zone"
           sx={{
             border: '2px dashed',
             borderColor: isDragActive ? 'primary.main' : 'grey.300',

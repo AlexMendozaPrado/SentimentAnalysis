@@ -58,7 +58,7 @@ export function AnalysisResults({ analysis }: AnalysisResultsProps) {
   ];
 
   return (
-    <Card>
+    <Card data-testid="analysis-results">
       <CardContent>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
           <AssessmentIcon sx={{ mr: 1, color: 'primary.main' }} />
@@ -218,7 +218,7 @@ export function AnalysisResults({ analysis }: AnalysisResultsProps) {
 
           {/* Text Metrics */}
           <Grid item xs={12}>
-            <Card variant="outlined">
+            <Card variant="outlined" data-testid="text-metrics">
               <CardContent>
                 <Typography variant="h6" gutterBottom>
                   Métricas del Texto

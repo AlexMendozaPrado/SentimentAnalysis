@@ -123,6 +123,7 @@ export function AnalyzePage() {
                   <TextField
                     fullWidth
                     label="Nombre del Cliente"
+                    name="clientName"
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
                     disabled={isAnalyzing}
@@ -135,6 +136,8 @@ export function AnalyzePage() {
                   <FormControl fullWidth required>
                     <InputLabel>Canal de Comunicación</InputLabel>
                     <Select
+                      name="channel"
+                      data-testid="channel-select"
                       value={channel}
                       label="Canal de Comunicación"
                       onChange={(e) => setChannel(e.target.value)}
@@ -168,11 +171,12 @@ export function AnalyzePage() {
                     </Button>
                     <Button
                       variant="contained"
+                      data-testid="analyze-button"
                       onClick={handleAnalyze}
                       disabled={!file || !clientName.trim() || !channel || isAnalyzing}
                       startIcon={
                         isAnalyzing ? (
-                          <CircularProgress size={20} color="inherit" />
+                          <CircularProgress size={20} color="inherit" data-testid="loading" />
                         ) : (
                           <UploadIcon />
                         )
